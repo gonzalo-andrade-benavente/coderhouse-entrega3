@@ -1,20 +1,21 @@
 const express = require('express');
 const app = express();
-const { Contenedor } = require('./models/Contenedor');
 
 const PORT = 8080;
 const PATH = './data/productos.txt';
 
-app.get('/healtcheck', (req, res) => {
-    res.json({
+const { Contenedor } = require('./models/Contenedor');
+const contenedor = new Contenedor(PATH);
+
+app.get('/healthcheck', (req, res) => {
+    res.status(200).json({
         ok: true,
-        msg: 'healtcheck ok!'
+        msg: 'healthcheck ok!'
     })
 })
 
 
 app.get('/productos', async (req, res) => {
-    const contenedor = new Contenedor(PATH);
     const data = await contenedor.readFileContenedor();
 
     if (data === undefined) {
@@ -32,8 +33,8 @@ app.get('/productos', async (req, res) => {
 })
 
 app.get('/productoRandom', async (req, res) => {
-    const contenedor = new Contenedor(PATH);
     const data = await contenedor.readFileContenedor();
+    const randomProduct = Math.floor(Math.random() * 3);
 
     if (data === undefined) {
         res.status(500).json({
@@ -45,7 +46,7 @@ app.get('/productoRandom', async (req, res) => {
     res.json({
         ok: true,
         total: data.length,
-        data: data[Math.floor(Math.random() * 3)],
+        data: data[randomProduct],
     });
 });
  
